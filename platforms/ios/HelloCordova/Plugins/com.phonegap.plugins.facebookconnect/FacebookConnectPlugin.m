@@ -82,6 +82,7 @@
                      ^(FBRequestConnection *connection, id <FBGraphUser>user, NSError *error) {
                          if (!error) {
                              self.userid = [user objectForKey:@"id"];
+                             self.user = user;
                              
                              // Send the plugin result. Wait for a successful fetch of user info.
                              if (self.loginCallbackId) {
@@ -515,6 +516,7 @@
     NSMutableDictionary *statusDict = [NSMutableDictionary dictionaryWithObject:status forKey:@"status"];
     if (nil != sessionDict) {
         [statusDict setObject:sessionDict forKey:@"authResponse"];
+        [statusDict setObject:self.user forKey:@"user"];
     }
         
     return statusDict;
