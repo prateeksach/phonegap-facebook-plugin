@@ -68,6 +68,9 @@ public class ConnectPlugin extends CordovaPlugin {
     private String method;
     private String graphPath;
     private String userID;
+    private String userEmail;
+    private String userGender;
+    private GraphUser userObj;
     private UiLifecycleHelper uiHelper;
     private boolean trackingPendingCall = false;
 
@@ -253,6 +256,9 @@ public class ConnectPlugin extends CordovaPlugin {
             if (checkActiveSession(session)) {
                 session.closeAndClearTokenInformation();
                 userID = null;
+                userObj = null;
+                userEmail = null;
+                userGender = null;
                 callbackContext.success();
             } else {
                 if (session != null) {
@@ -277,7 +283,11 @@ public class ConnectPlugin extends CordovaPlugin {
                         if (response.getError() != null) {
                             _callbackContext.error(getFacebookRequestErrorResponse(response.getError()));
                         } else {
+                            GraphObject graphObject = response.getGraphObject();
+                            userEmail = (String) response.getGraphObject().getProperty("email");
+                            userGender = (String) response.getGraphObject().getProperty("gender");
                             userID = user.getId();
+                            userObj = user;
                             _callbackContext.success(getResponse());
                         }
                     }
@@ -648,12 +658,19 @@ public class ConnectPlugin extends CordovaPlugin {
                                     GraphObject graphObject = response.getGraphObject();
                                     Log.d(TAG, "returning login object " + graphObject.getInnerJSONObject().toString());
                                     userID = user.getId();
+                                    userObj = user;
+                                    userEmail = (String) response.getGraphObject().getProperty("email");
+                                    userGender = (String) response.getGraphObject().getProperty("gender");
                                     loginContext.success(getResponse());
                                     loginContext = null;
                                 }
                             } else {
                                 // Just update the userID in case we force quit the application before
+                                GraphObject graphObject = response.getGraphObject();
+                                userEmail = (String) response.getGraphObject().getProperty("email");
+                                userGender = (String) response.getGraphObject().getProperty("gender");
                                 userID = user.getId();
+                                userObj = user;
                             }
                         }
                     });
@@ -693,6 +710,12 @@ public class ConnectPlugin extends CordovaPlugin {
                 + "\"session_key\": true,"
                 + "\"sig\": \"...\","
                 + "\"userID\": \"" + userID + "\""
+                + "},"
+                + "\"user\": {"
+                + "\"id\": \"" + userObj.getId() + "\","
+                + "\"name\": \"" + userObj.getName() + "\","
+                + "\"email\": \"" + userEmail + "\","
+                + "\"gender\": \"" + userGender + "\""
                 + "}"
                 + "}";
         } else {

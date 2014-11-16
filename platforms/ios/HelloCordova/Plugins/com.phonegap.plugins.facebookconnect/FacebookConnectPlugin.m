@@ -13,6 +13,8 @@
 @interface FacebookConnectPlugin ()
 
 @property (strong, nonatomic) NSString *userid;
+@property (strong, nonatomic) id user;
+@property (strong, nonatomic) NSString *userid;
 @property (strong, nonatomic) NSString* loginCallbackId;
 @property (strong, nonatomic) NSString* dialogCallbackId;
 @property (strong, nonatomic) NSString* graphCallbackId;
